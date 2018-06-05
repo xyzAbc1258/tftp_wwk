@@ -1,0 +1,53 @@
+name:                tftp
+version:             0.1.0.0
+github:              "githubuser/tftp"
+license:             BSD3
+author:              "Author name here"
+maintainer:          "example@example.com"
+copyright:           "2018 Author name here"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/tftp#readme>
+
+dependencies:
+- base >= 4.11 && < 5
+- network
+- network-conduit
+- bytestring
+- transformers
+- mtl
+- network-socket-options
+library:
+  source-dirs: src
+
+executables:
+  tftp-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - tftp
+
+tests:
+  tftp-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - tftp
