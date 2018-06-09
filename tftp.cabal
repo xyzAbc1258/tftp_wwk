@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7c138f8089dfc4618ae3682838835e262e026f537578aea116b48bf0584bde7c
+-- hash: a035cfafa9efdee473ca707a1e07e9a19a5942356d06db7a592f6120b53d042c
 
 name:           tftp
 version:        0.1.0.0
@@ -37,7 +37,13 @@ library
     , network-socket-options
     , transformers
   exposed-modules:
+      Ascii
+      Coq_p
+      Datatypes
       Helpers
+      Nat0
+      PeanoNat
+      String0
   other-modules:
       Paths_tftp
   default-language: Haskell2010

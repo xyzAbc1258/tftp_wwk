@@ -14,6 +14,7 @@ import Data.Maybe
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Internal as BS (c2w, w2c)
 import Helpers
+import Coq_p hiding (bind)
 
 main :: IO ()
 main = do
@@ -63,58 +64,10 @@ runConn (d,s,addr) = do
 
 nextWithRecvSend::(IO Packet -> IO Packet)->(Packet -> IO())->(State->Packet->IO(State,Packet))->State->Packet->IO(State,Packet)
 nextWithRecvSend recv send f s p = do -- recv with continuation
-    (ns,np) <- next s p
+    (ns,np) <- nextStep s p
     when (np /= None) $ send np
     if (ns == Exit) then return (ns,np)
     else do
         let fullRecv = recv $ send np >> fullRecv
         nnp <- fullRecv
         f ns nnp
-
-next::(MonadIO m)=>State->Packet->m(State, Packet)
-next Start (RRQ fName) = do
-    handle <- liftIO $ tryIOError $ openFile fName ReadMode
-    case handle of
-        Right fHandle -> next (WAck $ StateInfo fHandle 0) (Ack 0)
-        Left e -> return (Exit, Error 0 $ show e) 
-
-next Start (WRQ fName) = do
-    liftIO $ putStrLn $ "Opening file " ++ fName
-    handle <- liftIO $ tryIOError $ openFile fName WriteMode
-    case handle of
-        Right fHandle -> (liftIO $ putStrLn $ "Got handle " ++ show fHandle) 
-                            >> return (WData $ StateInfo fHandle 1, Ack 0)
-        Left e -> return (Exit, Error 0 $ show e)
-
-next (WAck stateInfo) (Ack num) | number stateInfo == num = do
-    let fHandle = handle stateInfo
-    let currNum = number stateInfo + 1
-    r <- liftIO $ BS.hGet fHandle 512
-    let stateInfo = StateInfo fHandle currNum
-    if (BS.length r) == 512 then return (WAck stateInfo, Data currNum r)
-        else do
-            liftIO $ hClose fHandle 
-            return (Exit, Data currNum r)
-
-next (WData stateInfo) (Data num bs) | number stateInfo == num = do
-    let fHandle = handle stateInfo
-    let nCount = number stateInfo
-    liftIO $ BS.hPut fHandle bs
-    liftIO $ putStrLn $ "Writing to file " ++ show fHandle ++ " length: " ++ show (BS.length bs)
-    if BS.length bs == 512 then return (WData $ incCounter stateInfo, Ack nCount)
-    else do
-        liftIO $ hClose fHandle
-        return (Exit, Ack nCount)
-
-next c@(WAck stateInfo) (Ack num) | number stateInfo > num = 
-    return (c, None)
-
-next c@(WData stateInfo) (Data num bs) | number stateInfo > num = 
-    return (c,None)
-
-next s _ = do
-    let info = getStateInfo s
-    case info of
-        Just i -> liftIO $ hClose $ handle i
-        _ -> return ()
-    return (Exit, Error 0 "Incorrect packet")
