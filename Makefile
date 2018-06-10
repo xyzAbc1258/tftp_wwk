@@ -11,5 +11,5 @@ extract: extraction.v Coq_p.vo
 	coqc $<
 		
 clean:
-	rm -f *.o *.cmi *.cmo *.cmx *.vo *.hi *.hsi *.hs *.glob *.hse .Coq_p.vo.aux
+	rm -f *.o *.cmi *.cmo *.cmx *.vo *.hi *.hsi *.hs *.glob *.hse .Coq_p.vo.aux .Coq_p.aux
 	

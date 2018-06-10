@@ -1,8 +1,8 @@
--- This file has been generated from package.yaml by hpack version 0.20.0.
+-- This file has been generated from package.yaml by hpack version 0.28.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a035cfafa9efdee473ca707a1e07e9a19a5942356d06db7a592f6120b53d042c
+-- hash: db8fd7c2ceff92410bde995a02a53cd477c89aeaeda2be1bb911c9bc95d377a9
 
 name:           tftp
 version:        0.1.0.0
@@ -16,7 +16,6 @@ license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
 cabal-version:  >= 1.10
-
 extra-source-files:
     ChangeLog.md
     README.md
