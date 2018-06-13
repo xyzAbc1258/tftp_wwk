@@ -14,12 +14,16 @@ import Data.Maybe
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Internal as BS (c2w, w2c)
 import Helpers
+import Text.Read
+import System.Environment
 import Coq_p hiding (bind)
 
 main :: IO ()
 main = do
-    workerTid <- forkIO tftp
-    cmdWorker workerTid
+    args <- getArgs
+    case args of
+      [p] -> forkIO (tftp (read p)) >>= cmdWorker
+      _ -> putStrLn "Incorrect arg num. Sould be 1. Port number"
 
 cmdWorker::ThreadId->IO()
 cmdWorker tid = do
@@ -28,11 +32,11 @@ cmdWorker tid = do
         "quit" -> return ()
         _ -> cmdWorker tid
 
-tftp::IO()
-tftp = do
+tftp::PortNumber -> IO()
+tftp p = do
     sock <- socket AF_INET Datagram defaultProtocol
     setSocketOption sock ReuseAddr 1
-    bind sock (SockAddrInet 69 iNADDR_ANY)
+    bind sock (SockAddrInet p iNADDR_ANY)
     mainLoop sock
 
 mainLoop::Socket->IO()

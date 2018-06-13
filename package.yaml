@@ -20,7 +20,7 @@ extra-source-files:
 description:         Please see the README on GitHub at <https://github.com/githubuser/tftp#readme>
 
 dependencies:
-- base >= 4.11 && < 5
+- base >= 4.6 && < 5
 - network
 - network-conduit
 - bytestring
